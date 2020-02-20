@@ -11,6 +11,7 @@ import Thumbnail from "./Thumbnail.js";
 class Houses extends React.Component {
   state = {
     houses: [],
+    allHouses: [],
     types: [],
     map: {
       key: {
@@ -21,20 +22,39 @@ class Houses extends React.Component {
         lng: 115.137
       },
       zoom: 14
-    }
+    },
+    searchTerm: ""
   };
   componentWillMount() {
     axios
       .get(`${process.env.REACT_APP_API}/houses`)
       .then(res => {
         this.setState({
-          houses: res.data
+          houses: res.data,
+          allHouses: res.data
         });
       })
       .catch(err => {
         console.log({ err });
       });
   }
+  doSearch = e => {
+    this.setState({ searchTerm: e.target.value }, () => {
+      if (!this.state.searchTerm || this.state.searchTerm == "") {
+        this.setState({ houses: this.state.allHouses });
+        return false;
+      }
+      // filter houses array
+      const searchTerm = this.state.searchTerm.toLowerCase();
+      let houses = this.state.allHouses.filter(
+        e =>
+          e.title.toLowerCase().includes(searchTerm) ||
+          e.city.toLowerCase().includes(searchTerm) ||
+          e.region.toLowerCase().includes(searchTerm)
+      );
+      this.setState({ houses });
+    });
+  };
   render() {
     return (
       <>
@@ -58,13 +78,19 @@ class Houses extends React.Component {
             <option value="price">Lowest Price</option>
             <option value="rating">Highest Rating</option>
           </select>
-          <input type="text" className="search" placeholder="Search..." />
+          <input
+            type="text"
+            className="search"
+            placeholder="Search..."
+            onChange={this.doSearch}
+            value={this.state.searchTerm}
+          />
         </div>
         <div className="grid map">
           <div className="grid four large">
             {// List of thumbnails
             this.state.houses.map((house, index) => (
-              <Thumbnail key={index} house={house}></Thumbnail>
+              <Thumbnail key={house._id} house={house}></Thumbnail>
             ))}
           </div>
           <div className="map">
