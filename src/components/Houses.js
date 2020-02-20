@@ -6,6 +6,7 @@ import "../styles/cards.css";
 import "../styles/grid.css";
 import "../styles/maps.css";
 import "../styles/nav.css";
+import Thumbnail from "./Thumbnail.js";
 
 class Houses extends React.Component {
   state = {
@@ -62,38 +63,8 @@ class Houses extends React.Component {
         <div className="grid map">
           <div className="grid four large">
             {// List of thumbnails
-            this.state.houses.map(house => (
-              <a
-                className="card link"
-                href={`/houses/${house._id}`}
-                key={house._id}
-              >
-                <div
-                  className="image"
-                  style={{ backgroundImage: `url(${house.image})` }}
-                ></div>
-                <div className="content">
-                  <small className="meta">
-                    {house.type.name} • {house.bedrooms} Bedrooms
-                  </small>
-                  <h2>{house.title}</h2>
-                  <small className="location">
-                    <i className="fas fa-map-marker-alt"></i>
-                    <span>
-                      {house.city}, {house.region}
-                    </span>
-                  </small>
-                  <span className="price">${house.price}/night</span>
-                  <span className="rating">
-                    {[...Array(Math.min(5, house.rating))].map(e => (
-                      <i className="fas fa-star"></i>
-                    ))}
-                    {[...Array(Math.max(0, 5 - house.rating))].map(e => (
-                      <i className="far fa-star"></i>
-                    ))}
-                  </span>
-                </div>
-              </a>
+            this.state.houses.map((house, index) => (
+              <Thumbnail key={index} house={house}></Thumbnail>
             ))}
           </div>
           <div className="map">
