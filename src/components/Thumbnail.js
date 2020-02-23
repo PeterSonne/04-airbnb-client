@@ -7,6 +7,8 @@ class Thumbnail extends React.Component {
         className="card link"
         href={`/houses/${this.props.house._id}`}
         key={this.props.house._id}
+        onMouseOver={e => this.props.onHouseOver(this.props.house._id)}
+        onMouseLeave={e => this.props.onHouseLeave()}
       >
         <div
           className="image"

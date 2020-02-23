@@ -7,6 +7,7 @@ import "../styles/grid.css";
 import "../styles/maps.css";
 import "../styles/nav.css";
 import Thumbnail from "./Thumbnail.js";
+import Pin from "./Pin.js";
 
 class Houses extends React.Component {
   state = {
@@ -100,6 +101,20 @@ class Houses extends React.Component {
     );
     this.setState({ houses });
   };
+  houseOver = id => {
+    let houses = this.state.houses.map(e => {
+      e.selected = e._id === id;
+      return e;
+    });
+    this.setState({ houses });
+  };
+  houseLeave = () => {
+    let houses = this.state.houses.map(e => {
+      e.selected = false;
+      return e;
+    });
+    this.setState({ houses });
+  };
   render() {
     return (
       <>
@@ -148,7 +163,12 @@ class Houses extends React.Component {
           <div className="grid four large">
             {// List of thumbnails
             this.state.houses.map((house, index) => (
-              <Thumbnail key={house._id} house={house}></Thumbnail>
+              <Thumbnail
+                key={house._id}
+                house={house}
+                onHouseOver={this.houseOver}
+                onHouseLeave={this.houseLeave}
+              ></Thumbnail>
             ))}
           </div>
           <div className="map">
@@ -156,7 +176,11 @@ class Houses extends React.Component {
               bootstrapURLKeys={this.state.map.key}
               center={this.state.map.center}
               zoom={this.state.map.zoom}
-            ></GoogleMap>
+            >
+              {this.state.houses.map((house, idx) => (
+                <Pin key={idx} house={house} lat={house.lat} lng={house.lng} />
+              ))}
+            </GoogleMap>
           </div>
         </div>
       </>
