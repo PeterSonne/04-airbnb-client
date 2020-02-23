@@ -11,6 +11,7 @@ import Thumbnail from "./Thumbnail.js";
 class Houses extends React.Component {
   state = {
     houses: [],
+    filteredHouses: [],
     allHouses: [],
     types: [],
     map: {
@@ -23,7 +24,12 @@ class Houses extends React.Component {
       },
       zoom: 14
     },
-    searchTerm: ""
+    searchTerm: "",
+    filters: {
+      bedrooms: 0,
+      type: "all",
+      price: 0
+    }
   };
   componentWillMount() {
     axios
@@ -31,29 +37,68 @@ class Houses extends React.Component {
       .then(res => {
         this.setState({
           houses: res.data,
+          filteredHouses: res.data,
           allHouses: res.data
         });
       })
       .catch(err => {
         console.log({ err });
       });
+    axios
+      .get(`${process.env.REACT_APP_API}/types`)
+      .then(res => {
+        this.setState({
+          types: res.data
+        });
+      })
+      .catch(err => {
+        console.log({ err });
+      });
   }
-  doSearch = e => {
+  filterChanged = (e, filter) => {
+    let filters = this.state.filters;
+    filters[filter] = e.target.value;
+    this.state.filters = filters;
+    this.applyFilters();
+    this.doSearch();
+  };
+  applyFilters = () => {
+    let filters = this.state.filters;
+    let filteredHouses = this.state.allHouses;
+    // min bedrooms
+    filteredHouses = filteredHouses.filter(e => e.bedrooms >= filters.bedrooms);
+    // house type
+    if (filters.type != "all") {
+      filteredHouses = filteredHouses.filter(e => e.type.name == filters.type);
+    }
+    // max price
+    if (filters.price > 0) {
+      filteredHouses = filteredHouses.filter(e => e.price <= filters.price);
+    }
+
+    //this.setState({ houses: filteredHouses, filteredHouses: filteredHouses });
+    this.state.filteredHouses = filteredHouses;
+  };
+  searchChanged = e => {
     this.setState({ searchTerm: e.target.value }, () => {
-      if (!this.state.searchTerm || this.state.searchTerm == "") {
-        this.setState({ houses: this.state.allHouses });
-        return false;
-      }
-      // filter houses array
-      const searchTerm = this.state.searchTerm.toLowerCase();
-      let houses = this.state.allHouses.filter(
-        e =>
-          e.title.toLowerCase().includes(searchTerm) ||
-          e.city.toLowerCase().includes(searchTerm) ||
-          e.region.toLowerCase().includes(searchTerm)
-      );
-      this.setState({ houses });
+      this.applyFilters();
+      this.doSearch();
     });
+  };
+  doSearch = () => {
+    if (!this.state.searchTerm || this.state.searchTerm == "") {
+      this.setState({ houses: this.state.filteredHouses });
+      return;
+    }
+    // filter houses array
+    const searchTerm = this.state.searchTerm.toLowerCase();
+    let houses = this.state.filteredHouses.filter(
+      e =>
+        e.title.toLowerCase().includes(searchTerm) ||
+        e.city.toLowerCase().includes(searchTerm) ||
+        e.region.toLowerCase().includes(searchTerm)
+    );
+    this.setState({ houses });
   };
   render() {
     return (
@@ -67,13 +112,26 @@ class Houses extends React.Component {
           </div>
         </nav>
         <div className="filters">
-          <select>
-            <option value="">Min Bedrooms: 1</option>
+          <select onChange={event => this.filterChanged(event, "bedrooms")}>
+            {[...Array(6)].map((e, i) => (
+              <option key={i} value={i + 1}>
+                Min Bedrooms: {i + 1}
+              </option>
+            ))}
           </select>
-          <select>
-            <option value="">All Types</option>
+          <select onChange={event => this.filterChanged(event, "type")}>
+            <option value="all">All Types</option>
+            {this.state.types.map((e, i) => (
+              <option key={i} value={e.name}>
+                {e.name}
+              </option>
+            ))}
           </select>
-          <input type="number" placeholder="max price" />
+          <input
+            type="number"
+            placeholder="max price"
+            onChange={event => this.filterChanged(event, "price")}
+          />
           <select>
             <option value="price">Lowest Price</option>
             <option value="rating">Highest Rating</option>
@@ -82,7 +140,7 @@ class Houses extends React.Component {
             type="text"
             className="search"
             placeholder="Search..."
-            onChange={this.doSearch}
+            onChange={this.searchChanged}
             value={this.state.searchTerm}
           />
         </div>

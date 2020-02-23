@@ -25,11 +25,11 @@ class Thumbnail extends React.Component {
           </small>
           <span className="price">${this.props.house.price}/night</span>
           <span className="rating">
-            {[...Array(Math.min(5, this.props.house.rating))].map(e => (
-              <i className="fas fa-star"></i>
+            {[...Array(this.props.house.rating)].map((e, i) => (
+              <i key={i} className="fas fa-star"></i>
             ))}
-            {[...Array(Math.max(0, 5 - this.props.house.rating))].map(e => (
-              <i className="far fa-star"></i>
+            {[...Array(5 - this.props.house.rating)].map((e, i) => (
+              <i key={i} className="far fa-star"></i>
             ))}
           </span>
         </div>
