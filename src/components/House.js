@@ -34,6 +34,14 @@ class House extends React.Component {
         this.setState({ house: res.data });
       })
       .catch(err => console.log(err));
+    axios
+      .get(
+        `${process.env.REACT_APP_API}/reviews?house=${this.props.match.params.id}`
+      )
+      .then(res => {
+        this.setState({ reviews: res.data });
+      })
+      .catch(err => console.log(err));
   }
   render() {
     return (
