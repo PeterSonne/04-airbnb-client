@@ -3,13 +3,12 @@ import axios from "axios";
 // Components
 import Nav from "./Nav.js";
 import Gallery from "./Gallery.js";
+import Review from "./Review";
 
 // CSS
 import "../styles/cards.css";
 import "../styles/grid.css";
 import "../styles/users.css";
-import "../styles/gallery.css";
-import "../styles/review.css";
 
 class House extends React.Component {
   state = {
@@ -113,23 +112,9 @@ class House extends React.Component {
                   {`${this.state.reviews.length} `}
                   Reviews
                 </h2>
-                {this.state.reviews.map((review, i) => {
-                  return (
-                    <div className="card review" key={i}>
-                      <div className="content">
-                        <div className="user">
-                          <div className="avatar"></div>
-                          <div className="name">
-                            <span>{review.author.name}</span>
-                            <small>{review.author.location}</small>
-                          </div>
-                        </div>
-                        <div className="rating"></div>
-                        <p>{review.content}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+                {this.state.reviews.map((review, i) => (
+                  <Review review={review} key={i}></Review>
+                ))}
               </div>
             </div>
             <div className="sidebar">
