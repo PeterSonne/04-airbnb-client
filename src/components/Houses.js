@@ -5,9 +5,9 @@ import GoogleMap from "google-map-react";
 import "../styles/cards.css";
 import "../styles/grid.css";
 import "../styles/maps.css";
-import "../styles/nav.css";
 import Thumbnail from "./Thumbnail.js";
 import Pin from "./Pin.js";
+import Nav from "./Nav.js";
 
 class Houses extends React.Component {
   state = {
@@ -118,14 +118,7 @@ class Houses extends React.Component {
   render() {
     return (
       <>
-        <nav>
-          <a href="/" className="logo"></a>
-          <div className="profile">
-            <a href="/plus" className="button">
-              <span>Airbnb Plus</span>
-            </a>
-          </div>
-        </nav>
+        <Nav></Nav>
         <div className="filters">
           <select onChange={event => this.filterChanged(event, "bedrooms")}>
             {[...Array(6)].map((e, i) => (
