@@ -1,15 +1,16 @@
 import React from "react";
 import "../styles/nav.css";
+import { Link } from "react-router-dom";
 
 export default class Nav extends React.Component {
   render() {
     return (
       <nav>
-        <a href="/" className="logo"></a>
+        <Link to="/" className="logo"></Link>
         <div className="profile">
-          <a href="/plus" className="button">
+          <Link to="/plus" className="button">
             <span>Airbnb Plus</span>
-          </a>
+          </Link>
         </div>
       </nav>
     );
