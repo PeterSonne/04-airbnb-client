@@ -26,7 +26,14 @@ class House extends React.Component {
     },
     reviews: []
   };
-  componentWillMount() {}
+  componentWillMount() {
+    axios
+      .get(`${process.env.REACT_APP_API}/houses/${this.props.match.params.id}`)
+      .then(res => {
+        this.setState({ house: res.data });
+      })
+      .catch(err => console.log(err));
+  }
   render() {
     return (
       <>
