@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 // Components
 import Nav from "./Nav.js";
+import Gallery from "./Gallery.js";
 
 // CSS
 import "../styles/cards.css";
@@ -38,14 +39,7 @@ class House extends React.Component {
     return (
       <>
         <Nav></Nav>
-        <div className="gallery">
-          <div className="image-main"></div>
-          <div className="previews">
-            {this.state.house.images.map((image, i) => (
-              <div className="preview" key={i}></div>
-            ))}
-          </div>
-        </div>
+        <Gallery images={this.state.house.images}></Gallery>
         <div className="grid medium">
           <div className="grid sidebar-right">
             <div className="content">
