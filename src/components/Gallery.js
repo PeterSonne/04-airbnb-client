@@ -16,7 +16,10 @@ class Gallery extends Component {
   };
   render() {
     return (
-      <div className="gallery">
+      <div
+        className="gallery"
+        style={{ display: this.props.loading ? "none" : "" }}
+      >
         <div
           className="image-main"
           style={{ backgroundImage: `url(${this.state.mainImage})` }}

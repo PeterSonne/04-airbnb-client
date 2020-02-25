@@ -2,17 +2,23 @@ import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import GoogleMap from "google-map-react";
+
+// styles
 import "../styles/cards.css";
 import "../styles/grid.css";
 import "../styles/maps.css";
+
+// components
 import Thumbnail from "./Thumbnail.js";
 import Pin from "./Pin.js";
 import Nav from "./Nav.js";
+import Loader from "./Loader";
 
 class Houses extends React.Component {
   state = {
     houses: [],
     types: [],
+    loading: true,
     map: {
       key: {
         key: "AIzaSyBKMVj4gaJLU9GTV1zOaWQj7ggKVbXQep0"
@@ -38,7 +44,8 @@ class Houses extends React.Component {
       .get(`${process.env.REACT_APP_API}/houses`)
       .then(res => {
         this.setState({
-          houses: res.data
+          houses: res.data,
+          loading: false
         });
         this.filteredHouses = res.data;
         this.allHouses = res.data;
@@ -156,7 +163,12 @@ class Houses extends React.Component {
             value={this.state.searchTerm}
           />
         </div>
-        <div className="grid map">
+        <Loader loading={this.state.loading}></Loader>
+
+        <div
+          className="grid map"
+          style={{ display: this.state.loading ? "none" : "" }}
+        >
           <div className="grid four large">
             {// List of thumbnails
             this.state.houses.map((house, index) => (

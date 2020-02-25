@@ -4,6 +4,7 @@ import axios from "axios";
 import Nav from "./Nav.js";
 import Gallery from "./Gallery.js";
 import Review from "./Review";
+import Loader from "./Loader";
 
 // CSS
 import "../styles/cards.css";
@@ -24,13 +25,14 @@ class House extends React.Component {
       amenities: [],
       rating: 0
     },
-    reviews: []
+    reviews: [],
+    loading: true
   };
   componentWillMount() {
     axios
       .get(`${process.env.REACT_APP_API}/houses/${this.props.match.params.id}`)
       .then(res => {
-        this.setState({ house: res.data });
+        this.setState({ house: res.data, loading: false });
       })
       .catch(err => console.log(err));
     axios
@@ -46,8 +48,15 @@ class House extends React.Component {
     return (
       <>
         <Nav></Nav>
-        <Gallery images={this.state.house.images}></Gallery>
-        <div className="grid medium">
+        <Loader loading={this.state.loading}></Loader>
+        <Gallery
+          images={this.state.house.images}
+          loading={this.state.loading}
+        ></Gallery>
+        <div
+          className="grid medium"
+          style={{ display: this.state.loading ? "none" : "block" }}
+        >
           <div className="grid sidebar-right">
             <div className="content">
               <h1>{this.state.house.title}</h1>
