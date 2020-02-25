@@ -5,7 +5,7 @@ class Thumbnail extends React.Component {
   render() {
     return (
       <Link
-        className="card link"
+        className={"card link" + (this.props.house.selected ? " active" : "")}
         to={`/houses/${this.props.house._id}`}
         key={this.props.house._id}
         onMouseOver={e => this.props.onHouseOver(this.props.house._id)}

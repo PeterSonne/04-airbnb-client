@@ -37,8 +37,12 @@ a.card {
   cursor: pointer;
 }
 
-.card.link:hover {
+.card.link:hover,
+.card.link.active {
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+.card.link.active {
+  border-color: #29ad46;
 }
 
 .card .image {

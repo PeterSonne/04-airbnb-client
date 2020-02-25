@@ -176,7 +176,7 @@ class Houses extends React.Component {
           className="grid map"
           style={{ display: this.state.loading ? "none" : "" }}
         >
-          <div className="grid four large">
+          <div className="grid four large grid-scroll">
             {// List of thumbnails
             this.state.houses.map((house, index) => (
               <Thumbnail
@@ -194,7 +194,14 @@ class Houses extends React.Component {
               zoom={this.state.map.zoom}
             >
               {this.state.houses.map((house, idx) => (
-                <Pin key={idx} house={house} lat={house.lat} lng={house.lng} />
+                <Pin
+                  key={idx}
+                  house={house}
+                  lat={house.lat}
+                  lng={house.lng}
+                  mouseEnter={this.houseOver}
+                  mouseLeave={this.houseLeave}
+                />
               ))}
             </GoogleMap>
           </div>
