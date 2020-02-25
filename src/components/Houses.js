@@ -12,8 +12,6 @@ import Nav from "./Nav.js";
 class Houses extends React.Component {
   state = {
     houses: [],
-    filteredHouses: [],
-    allHouses: [],
     types: [],
     map: {
       key: {
@@ -25,22 +23,25 @@ class Houses extends React.Component {
       },
       zoom: 14
     },
-    searchTerm: "",
-    filters: {
-      bedrooms: 0,
-      type: "all",
-      price: 0
-    }
+    searchTerm: ""
   };
+  // some vars
+  filters = {
+    bedrooms: 0,
+    type: "all",
+    price: 0
+  };
+  filteredHouses = [];
+  allHouses = [];
   componentWillMount() {
     axios
       .get(`${process.env.REACT_APP_API}/houses`)
       .then(res => {
         this.setState({
-          houses: res.data,
-          filteredHouses: res.data,
-          allHouses: res.data
+          houses: res.data
         });
+        this.filteredHouses = res.data;
+        this.allHouses = res.data;
       })
       .catch(err => {
         console.log({ err });
@@ -57,28 +58,30 @@ class Houses extends React.Component {
       });
   }
   filterChanged = (e, filter) => {
-    let filters = this.state.filters;
-    filters[filter] = e.target.value;
-    this.state.filters = filters;
+    // set filter
+    this.filters[filter] = e.target.value;
+    // do filter and search
     this.applyFilters();
     this.doSearch();
   };
   applyFilters = () => {
-    let filters = this.state.filters;
-    let filteredHouses = this.state.allHouses;
+    this.filteredHouses = this.allHouses;
     // min bedrooms
-    filteredHouses = filteredHouses.filter(e => e.bedrooms >= filters.bedrooms);
+    this.filteredHouses = this.filteredHouses.filter(
+      e => e.bedrooms >= this.filters.bedrooms
+    );
     // house type
-    if (filters.type != "all") {
-      filteredHouses = filteredHouses.filter(e => e.type.name == filters.type);
+    if (this.filters.type != "all") {
+      this.filteredHouses = this.filteredHouses.filter(
+        e => e.type.name == this.filters.type
+      );
     }
     // max price
-    if (filters.price > 0) {
-      filteredHouses = filteredHouses.filter(e => e.price <= filters.price);
+    if (this.filters.price > 0) {
+      this.filteredHouses = this.filteredHouses.filter(
+        e => e.price <= this.filters.price
+      );
     }
-
-    //this.setState({ houses: filteredHouses, filteredHouses: filteredHouses });
-    this.state.filteredHouses = filteredHouses;
   };
   searchChanged = e => {
     this.setState({ searchTerm: e.target.value }, () => {
@@ -88,17 +91,18 @@ class Houses extends React.Component {
   };
   doSearch = () => {
     if (!this.state.searchTerm || this.state.searchTerm == "") {
-      this.setState({ houses: this.state.filteredHouses });
+      this.setState({ houses: this.filteredHouses });
       return;
     }
     // filter houses array
     const searchTerm = this.state.searchTerm.toLowerCase();
-    let houses = this.state.filteredHouses.filter(
+    let houses = this.filteredHouses.filter(
       e =>
         e.title.toLowerCase().includes(searchTerm) ||
         e.city.toLowerCase().includes(searchTerm) ||
         e.region.toLowerCase().includes(searchTerm)
     );
+    // finally update state and DOM
     this.setState({ houses });
   };
   houseOver = id => {
