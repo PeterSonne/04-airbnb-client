@@ -44,7 +44,7 @@ class Houses extends React.Component {
       .get(`${process.env.REACT_APP_API}/houses`)
       .then(res => {
         this.setState({
-          houses: res.data,
+          houses: res.data.sort((a, b) => a.price - b.price),
           loading: false
         });
         this.filteredHouses = res.data;
@@ -112,6 +112,13 @@ class Houses extends React.Component {
     // finally update state and DOM
     this.setState({ houses });
   };
+  sortChanged = e => {
+    let sort = e.target.value;
+    let houses = this.state.houses.sort((a, b) =>
+      sort == "price" ? a[sort] - b[sort] : b[sort] - a[sort]
+    );
+    this.setState({ houses });
+  };
   houseOver = id => {
     let houses = this.state.houses.map(e => {
       e.selected = e._id === id;
@@ -151,7 +158,7 @@ class Houses extends React.Component {
             placeholder="max price"
             onChange={event => this.filterChanged(event, "price")}
           />
-          <select>
+          <select onChange={this.sortChanged}>
             <option value="price">Lowest Price</option>
             <option value="rating">Highest Rating</option>
           </select>
